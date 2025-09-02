@@ -8,6 +8,7 @@ public class ContactlyApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(ContactlyApplication.class, args);
+		System.out.println("Hello!!!!!");
 	}
 
 }
