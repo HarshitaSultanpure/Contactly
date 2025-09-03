@@ -1,6 +1,6 @@
 Contactly
 
-A cloud-based smart contact manager that allows users to log in from anywhere and securely manage their contacts.
+A cloud-based web application that allows users to log in from anywhere and securely manage their contacts.
 
 📌 About
 
