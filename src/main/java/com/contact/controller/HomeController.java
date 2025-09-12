@@ -1,22 +1,90 @@
 package com.contact.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.contact.dao.UserRepository;
+import com.contact.entities.User;
+import com.contact.helper.Message;
+
+import jakarta.servlet.http.HttpSession;
+
 
 @Controller
 public class HomeController {
-	@RequestMapping("/home")
+	
+	@Autowired
+	private UserRepository userRepository;
+	
+	
+	//home handler.......................
+	@RequestMapping("/")
 	public String home(Model model) //Model ki help se data template pr bhejte h
 	{
 		model.addAttribute("title", "Home - Contactly");
 		return "home";
 	}
 	
+	//about handler......................
 	@RequestMapping("/about")
 	public String about(Model model) //Model ki help se data template pr bhejte h
 	{
 		model.addAttribute("title", "About - Contactly");
 		return "about";
+	}
+	
+	//signup handler.....................
+	@RequestMapping("/signup")
+	public String signup(Model model) //Model ki help se data template pr bhejte h
+	{
+		model.addAttribute("title", "Register - Contactly");
+		model.addAttribute("user", new User()); //user name ki key me data store ho jaega form ka
+		return "signup";
+	}
+	
+	//handler for registering user
+	@RequestMapping(value = "/do_register",method = RequestMethod.POST)  
+	public String registerUser(@ModelAttribute("user") User user, // Binds form fields to a User object
+			@RequestParam(value = "agreement", defaultValue="false") boolean agreement, // Reads 'agreement' checkbox value
+			Model model, // Used to pass data to the view
+			HttpSession session )
+	{
+		try
+		{
+			if(!agreement)
+			{
+				System.out.println("didnt agree conditions");
+				//throw new Exception("You have not agreed to the terms and conditions");
+				model.addAttribute("user", user); // Retain form data
+				model.addAttribute("message", new Message("You have not agreed to the terms and conditions", "alert-danger"));
+				
+				return "signup";
+			}
+			
+			user.setRole("ROLE_USER");
+			user.setEnabled(true);
+			user.setImageUrl("default.png");
+			
+			System.out.println("Agreement"+ agreement);
+			System.out.println("USER"+ user);
+			
+			User result = this.userRepository.save(user); 
+			
+			model.addAttribute("user", new User());
+			session.setAttribute("message", new Message("successfully registered", "alert-success"));
+			return "signup"; 
+		}
+		catch(Exception e) 
+		{
+			e.printStackTrace();
+			model.addAttribute("user", user);
+			session.setAttribute("message", new Message("something went wrong!!"+e.getMessage(), "alert-danger"));
+			return "signup";
+		}
 	}
 }

@@ -2,7 +2,6 @@ package com.contact.entities;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -23,8 +22,8 @@ public class User {
 	@Column(unique=true)
 	private String email;
 	private String password;
-	private String role;
-	private boolean enabled;
+	private String role; // role will be user 
+	private boolean enabled;  //enable will be true bydefault.....
 	private String imageUrl;
 	@Column(length=500)
 	private String about;
@@ -82,7 +81,7 @@ public class User {
 	public String getAbout() {
 		return about;
 	}
-	public void setAbout(String about) {
+	public void setAbout(String about) {	
 		this.about = about;
 	}
 	public List<Contact> getContacts() {
@@ -91,4 +90,10 @@ public class User {
 	public void setContacts(List<Contact> contacts) {
 		this.contacts = contacts;
 	}
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", name=" + name + ", email=" + email + ", password=" + password + ", role=" + role
+				+ ", enabled=" + enabled + ", imageUrl=" + imageUrl + ", about=" + about + ", contacts=" + contacts
+				+ "]";
+	}	
 }
