@@ -3,6 +3,7 @@ package com.contact.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -13,6 +14,7 @@ import com.contact.entities.User;
 import com.contact.helper.Message;
 
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 
 
 @Controller
@@ -47,15 +49,23 @@ public class HomeController {
 		return "signup";
 	}
 	
-	//handler for registering user
-	@RequestMapping(value = "/do_register",method = RequestMethod.POST)  
-	public String registerUser(@ModelAttribute("user") User user, // Binds form fields to a User object
-			@RequestParam(value = "agreement", defaultValue="false") boolean agreement, // Reads 'agreement' checkbox value
+	//handler for registering user   
+	@RequestMapping(value = "/do_register",method = RequestMethod.POST)  //with @Valid all the rules will be applied
+	public String registerUser(@Valid @ModelAttribute("user") User user,BindingResult result1, @RequestParam(value = "agreement", defaultValue="false") boolean agreement, // Reads 'agreement' checkbox value
 			Model model, // Used to pass data to the view
-			HttpSession session )
+			HttpSession session ) 
 	{
 		try
 		{
+			//Check for form validation errors
+			if(result1.hasErrors())  //agr koi error hogi to vo signup page pr hi show ho jaegi 
+			{
+				System.out.println("ERROR "+result1.toString());
+				model.addAttribute("user", user);
+				return "signup"; 
+			}
+			
+			//Check for the agreement checkbox
 			if(!agreement)
 			{
 				System.out.println("didnt agree conditions");
@@ -66,16 +76,18 @@ public class HomeController {
 				return "signup";
 			}
 			
+			//Save the user if there are no errors
 			user.setRole("ROLE_USER");
 			user.setEnabled(true);
 			user.setImageUrl("default.png");
 			
-			System.out.println("Agreement"+ agreement);
+			System.out.println("Agreement"+ agreement); 
 			System.out.println("USER"+ user);
 			
-			User result = this.userRepository.save(user); 
+			User result = this.userRepository.save(user);  
 			
 			model.addAttribute("user", new User());
+			//successfully registered....
 			session.setAttribute("message", new Message("successfully registered", "alert-success"));
 			return "signup"; 
 		}

@@ -11,7 +11,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name="CONTACT")
 public class Contact {
-	@Id
+	@Id 
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long cId;
 	private String name;
