@@ -23,7 +23,7 @@
 
 	<!-- Navbar -->
 	
-	<nav class="navbar navbar-expand-lg navbar-dark bg-light bg-primary">
+	<nav class="fixed-top navbar navbar-expand-lg navbar-dark bg-light bg-primary">
 		<a class="navbar-brand" href="#">Contactly</a>
 		<button class="navbar-toggler" type="button" data-toggle="collapse"
 			data-target="#navbarSupportedContent"
@@ -38,9 +38,8 @@
 						<span class="sr-only">(current)</span>
 				</a></li>
 				
-				\
-				<li class="nav-item"><a class="nav-link " href="#" 
-				><span th:text="${user.name}"></span></a>
+				<li class="nav-item">
+				<a class="nav-link" href="#"><span th:text="${user.name}"></span></a>
 				</li>
 				
 				<li class="nav-item"><a class="nav-link " th:href="@{/logout}" href="#">Logout</a>
@@ -56,13 +55,16 @@
 
 
 	<!-- sidebar -->
-	<div class="sidebar">
-	<a href="#" class="item"> <i class="fa-solid fa-house-user"></i>Home</a>
-	<a href="#" class="item"><i class="fa-solid fa-users-viewfinder"></i>View Contacts</a>
-	<a href="#" class="item"><i class="fa-solid fa-user-plus"></i>Add Contact</a>
-	<a href="#" class="item"><i class="fa-regular fa-user"></i>Your Profile</a>
-	<a href="#" class="item"><i class="fa-solid fa-gears"></i>Settings</a>
-	<a href="#" class="item"><i class="fa-solid fa-right-from-bracket"></i>Logout</a>
+	<div class="sidebar mt-2">
+	
+	<span onclick="toggleSidebar()" class="crossBtn">&times;</span>
+	
+	<a href="#" th:href="@{/user/index}" class="item"><i class="fa-solid fa-house-user"></i> Home</a>
+	<a href="#" class="item"><i class="fa-solid fa-users-viewfinder"></i> View Contacts</a>
+	<a href="#" th:href="@{/user/add-contact}" class="item"><i class="fa-solid fa-user-plus"></i> Add Contact</a>
+	<a href="#" class="item"><i class="fa-regular fa-user"></i> Your Profile</a>
+	<a href="#" class="item"><i class="fa-solid fa-gears"></i> Settings</a>
+	<a href="#" th:href="@{/logout}" class="item"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
 	
 	<div class="divider"></div>
 	
@@ -70,7 +72,8 @@
 	<!-- end sidebar-->
 	
 	<!-- content area -->
-	<div class="content">
+	<div class="content mt-5">
+	<i onclick="toggleSidebar()" class="fas fa-bars m-3"></i>
 		<div th:replace="${content}"></div>
 	
 	

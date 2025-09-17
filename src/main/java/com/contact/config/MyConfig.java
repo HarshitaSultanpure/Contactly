@@ -51,8 +51,6 @@ public class MyConfig extends WebSecurityConfigurerAdapter{
 		.loginPage("/signin")
 		.loginProcessingUrl("/dologin") //jis page pr hum submit krwana chahte hai
 		.defaultSuccessUrl("/user/index") //after successfully login is page pr bhejenge
-		.and().csrf().disable();
+		.and().csrf().disable(); 
 	}
-	
-	
 }
