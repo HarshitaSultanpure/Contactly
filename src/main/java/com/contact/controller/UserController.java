@@ -1,11 +1,14 @@
 package com.contact.controller;
 
 import java.io.File;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.Principal;
+
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -21,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.contact.dao.UserRepository;
 import com.contact.entities.Contact;
 import com.contact.entities.User;
+import com.contact.helper.Message;
 
 @Controller
 @RequestMapping("/user")
@@ -69,12 +73,12 @@ public class UserController {
 	public String processContact(
 	@ModelAttribute Contact contact,  //all the data of contact will be stored
 	@RequestParam("profileImage") MultipartFile file, //image file will be stored
-	Principal principal) //will return view
+	Principal principal, HttpSession session) //will return view
 	{
 	try {	
 		String name = principal.getName();
 		User user = this.userRepository.getUserByUserName(name);
-		
+		  
 		//processing and uploading file
 		if(file.isEmpty())
 		{
@@ -86,23 +90,32 @@ public class UserController {
 			File saveFile = new ClassPathResource("static/img").getFile();
 			
 			Path path = Paths.get(saveFile.getAbsolutePath()+File.separator+file.getOriginalFilename());
-			Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
 			
+			//try-with-resources to ensure the InputStream is closed
+            try (InputStream inputStream = file.getInputStream()) {
+                Files.copy(inputStream, path, StandardCopyOption.REPLACE_EXISTING);
+            }
 			System.out.println("img uploaded");
 		}
 		contact.setUser(user);
 		user.getContacts().add(contact);
 		
-		
 		this.userRepository.save(user);
 		
 		System.out.println(contact);
 		System.out.println("added to db");
+		
+		//success message 
+		session.setAttribute("message", new Message("contact is added successfully", "success"));
 	}
 	catch(Exception e)
 	{
 		System.out.println("ERROR: "+e.getMessage());
 		e.printStackTrace();
+		
+		//data not added error message
+		session.setAttribute("message", new Message("something went wrong", "danger"));
+
 	}
 
 	return "normal/add_contact_form";
