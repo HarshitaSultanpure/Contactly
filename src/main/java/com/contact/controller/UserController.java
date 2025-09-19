@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.Principal;
+import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.contact.dao.ContactRepository;
 import com.contact.dao.UserRepository;
 import com.contact.entities.Contact;
 import com.contact.entities.User;
@@ -28,97 +30,110 @@ import com.contact.helper.Message;
 
 @Controller
 @RequestMapping("/user")
-public class UserController { 
+public class UserController {
 
 	@Autowired
 	private UserRepository userRepository;
-	
-	@ModelAttribute //method for adding common data to response. this method will be executed for all the handlers 
-	public void addCommonData(Model model, Principal principal)
-	{
+
+	@Autowired
+	private ContactRepository contactRepository;
+
+	@ModelAttribute // method for adding common data to response. this method will be executed for
+					// all the handlers
+	public void addCommonData(Model model, Principal principal) {
 		// Gets the currently loggedin user's username (email)
 		String userName = principal.getName();
 		System.out.println(userName);
-		
-		//get user using username(email)
+
+		// get user using username(email)
 		User user = userRepository.getUserByUserName(userName);
 		System.out.println(user);
-		
-		model.addAttribute("user",user);
-		
-		
+
+		model.addAttribute("user", user);
+
 	}
-	
-	
-	//dashboard home
-	@RequestMapping("/index")   //jab /user/index likhenge tb ye wala handler chlega and user_dashboard wali file dikhegi
-	public String dashboard(Model model,Principal principal) //through Principal interface we will be able to fetch user name 
+
+	// dashboard home
+	@RequestMapping("/index") // jab /user/index likhenge tb ye wala handler chlega and user_dashboard wali
+								// file dikhegi
+	public String dashboard(Model model, Principal principal) // through Principal interface we will be able to fetch
+																// user name
 	{
-		model.addAttribute("title","user dashboard");
+		model.addAttribute("title", "user dashboard");
 		return "normal/user_dashboard";
 	}
-	
-	//open add form handler.......
+
+	// open add form handler.......
 	@GetMapping("/add-contact")
-	public String openAddContactForm(Model model)
-	{
+	public String openAddContactForm(Model model) {
 		model.addAttribute("title", "Add Contact");
 		model.addAttribute("contact", new Contact());
-		
+
 		return "normal/add_contact_form";
 	}
-	
-	//processing add contact form
-	@PostMapping("/process-contact") //will specify that we POST method is used....
-	public String processContact(
-	@ModelAttribute Contact contact,  //all the data of contact will be stored
-	@RequestParam("profileImage") MultipartFile file, //image file will be stored
-	Principal principal, HttpSession session) //will return view
-	{
-	try {	
-		String name = principal.getName();
-		User user = this.userRepository.getUserByUserName(name);
-		  
-		//processing and uploading file
-		if(file.isEmpty())
-		{
-			System.out.println("file empty");
-		}
-		else
-		{
-			contact.setImage(file.getOriginalFilename());
-			File saveFile = new ClassPathResource("static/img").getFile();
-			
-			Path path = Paths.get(saveFile.getAbsolutePath()+File.separator+file.getOriginalFilename());
-			
-			//try-with-resources to ensure the InputStream is closed
-            try (InputStream inputStream = file.getInputStream()) {
-                Files.copy(inputStream, path, StandardCopyOption.REPLACE_EXISTING);
-            }
-			System.out.println("img uploaded");
-		}
-		contact.setUser(user);
-		user.getContacts().add(contact);
-		
-		this.userRepository.save(user);
-		
-		System.out.println(contact);
-		System.out.println("added to db");
-		
-		//success message 
-		session.setAttribute("message", new Message("contact is added successfully", "success"));
-	}
-	catch(Exception e)
-	{
-		System.out.println("ERROR: "+e.getMessage());
-		e.printStackTrace();
-		
-		//data not added error message
-		session.setAttribute("message", new Message("something went wrong", "danger"));
 
+	// processing add contact form
+	@PostMapping("/process-contact") // will specify that we POST method is used....
+	public String processContact(@ModelAttribute Contact contact, // all the data of contact will be stored
+			@RequestParam("profileImage") MultipartFile file, // image file will be stored
+			Principal principal, HttpSession session) // will return view
+	{
+		try {
+			String name = principal.getName();
+			User user = this.userRepository.getUserByUserName(name);
+
+			// processing and uploading file
+			if (file.isEmpty()) {
+				System.out.println("file empty");
+			} else {
+				contact.setImage(file.getOriginalFilename());
+				File saveFile = new ClassPathResource("static/img").getFile();
+
+				Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + file.getOriginalFilename());
+
+				// try-with-resources to ensure the InputStream is closed
+				try (InputStream inputStream = file.getInputStream()) {
+					Files.copy(inputStream, path, StandardCopyOption.REPLACE_EXISTING);
+				}
+				System.out.println("img uploaded");
+			}
+			contact.setUser(user);
+			user.getContacts().add(contact);
+
+			this.userRepository.save(user);
+
+			System.out.println(contact);
+			System.out.println("added to db");
+
+			// success message
+			session.setAttribute("message", new Message("contact is added successfully", "success"));
+		} catch (Exception e) {
+			System.out.println("ERROR: " + e.getMessage());
+			e.printStackTrace();
+
+			// data not added error message
+			session.setAttribute("message", new Message("something went wrong", "danger"));
+
+		}
+
+		return "normal/add_contact_form";
 	}
 
-	return "normal/add_contact_form";
+	// show contacts handler
+	@GetMapping("/show-contacts")
+	public String showContacts(Model model, Principal principal) {
+		model.addAttribute("title", "show user contacts");
+
+		// to send list of all contacts...
+		String userName = principal.getName();// to get the username of loggedin person
+		User user = this.userRepository.getUserByUserName(userName);
+
+		// will fetch all the contacts of a logged in person...
+		List<Contact> contacts = this.contactRepository.findContactsByUser(user.getId());
+
+		model.addAttribute("contacts", contacts);
+
+		return "normal/show_contacts";
 	}
-	
- }
+
+}
