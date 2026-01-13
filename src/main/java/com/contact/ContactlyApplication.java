@@ -10,5 +10,4 @@ public class ContactlyApplication {
 		SpringApplication.run(ContactlyApplication.class, args);
 		System.out.println("Hello!!!!!"); 
 	}
-
 }

@@ -40,12 +40,11 @@ public class User {
 	private String about;
 	
 	//one user can have many contacts....
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user") //cascade work is jese hi user ko save krenge usse related sare contact save ho jaege or jb user ko delete krenge usse related sare contacts delete ho jaenge
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user", orphanRemoval=true) //cascade work is jese hi user ko save krenge usse related sare contact save ho jaege or jb user ko delete krenge usse related sare contacts delete ho jaenge
 	private List<Contact> contacts = new ArrayList<>();
 	
 	public User() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 	public int getId() {
 		return id;

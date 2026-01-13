@@ -20,7 +20,6 @@ body{
 	background: #ffffff;
 }
 
-
 #login .container #login-row #login-column #login-box {
   margin-top: 120px;
   max-width: 600px;
@@ -28,9 +27,11 @@ body{
   border: 1px solid #9C9C9C;
   background-color: white;
 }
+
 #login .container #login-row #login-column #login-box #login-form {
   padding: 20px;
 }
+
 #login .container #login-row #login-column #login-box #login-form #register-link {
   margin-top: -85px;
 }
@@ -78,6 +79,7 @@ body{
 	background: #e2e2e2;
 	margin-top: 10px;
 }
+
 .content{
 	margin-left: 20%;
 }
@@ -88,4 +90,30 @@ body{
 	right: 35px;
 	font-size: 36px;
 	cursor: pointer;
+}
+
+.my_profile_picture{
+	width: 30PX;
+	height: 30px;
+	object-fit: cover;
+	border-radius:50px;
+}
+
+/* search css */
+.search-container{
+	position: relative;
+} 
+
+.search-result{
+	position: absolute;
+	background: white;
+	width: 100%;
+	padding: 10px;
+	border: 1px solid gray;
+	display: none;
+}
+
+.active{
+ background: #009688 !important;
+ color: white !important;	
 }

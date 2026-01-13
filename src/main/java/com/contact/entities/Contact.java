@@ -8,32 +8,34 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name="CONTACT")
 public class Contact {
-	@Id 
+	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private long cId;
+	private int cId;
 	private String name;
 	private String secondName;
-	private String work;
+	private String work;	
 	private String email;
 	private String phone;
 	private String image;
-	@Column(length=50000)
+	@Column(length=5000)
 	private String description;
 	
 	@ManyToOne //many contacts can belong to one user
+	@JsonIgnore //with this annotation the data of user will not be serialized
 	private User user;   // a foreign key will be created for user column in contact table
 	
 	public Contact() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
-	public long getcId() {
+	public int getcId() {
 		return cId;
 	}
-	public void setcId(long cId) {
+	public void setcId(int cId) {
 		this.cId = cId;
 	}
 	public String getName() {
@@ -88,6 +90,10 @@ public class Contact {
 	public String toString() {
 		return "Contact [cId=" + cId + ", name=" + name + ", secondName=" + secondName + ", work=" + work + ", email="
 				+ email + ", phone=" + phone + ", image=" + image + ", description=" + description + "]";
+	}
+	@Override
+	public boolean equals(Object obj) {
+		return this.cId ==((Contact)obj).getcId();
 	}
 	
 	
