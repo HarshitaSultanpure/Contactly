@@ -1,0 +1,41 @@
+version: '3.8'
+services:
+
+  mysql:
+    image: mysql:8.0
+    container_name: contactly-mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: contactly
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s        # ← increased from 10s
+      retries: 15         # ← increased from 10
+      interval: 10s       # ← increased from 5s
+      start_period: 60s   # ← ADD THIS LINE (gives MySQL time to start)
+
+  app:
+    build: .
+    container_name: contactly-app
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/contactly?serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    depends_on:
+      mysql:
+        condition: service_healthy
+    volumes:
+      - uploads:/app/uploads
+
+volumes:
+  mysql_data:
+  uploads:
