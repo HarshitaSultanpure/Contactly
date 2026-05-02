@@ -39,11 +39,11 @@ public class HomeController {
 	}
 	
 	//about handler......................
-	@RequestMapping("/about")
+	@RequestMapping("/contact-us")
 	public String about(Model model) //Model ki help se data template pr bhejte h
 	{
-		model.addAttribute("title", "About - Contactly");
-		return "about";
+		model.addAttribute("title", "Contact Us - Contactly");
+		return "contact_us";
 	}
 	
 	//signup handler.....................
