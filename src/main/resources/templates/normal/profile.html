@@ -14,10 +14,13 @@
 			<div class="card-body">
 			
 			<div class="container text-center">
-			
-			<img style="height: 200px; width: 200px;"
-						class="my_profile_picture" th:src="@{'/img/'+${user.imageUrl}}"
-						alt="profile photo" />
+
+				<img style="height: 200px; width: 200px;"
+					 class="my_profile_picture"
+					 th:src="${user.imageUrl == 'default.png'} ?
+            @{'/img/default.png'} :
+            @{'/uploads/'+${user.imageUrl}}"
+					 alt="profile photo" />
 			
 			
 			</div>

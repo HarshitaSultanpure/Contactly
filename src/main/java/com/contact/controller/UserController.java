@@ -99,15 +99,22 @@ public class UserController {
 				System.out.println("file empty");
 				contact.setImage("contact.png");
 			} else {
-				contact.setImage(file.getOriginalFilename());
-				File saveFile = new ClassPathResource("static/img").getFile();
+				String uploadDir = "/app/uploads/";
 
-				Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + file.getOriginalFilename());
+				File saveDir = new File(uploadDir);
+				if(!saveDir.exists()) {
+					saveDir.mkdirs();
+				}
+
+				Path path = Paths.get(uploadDir + file.getOriginalFilename());
 
 				// try-with-resources to ensure the InputStream is closed
 				try (InputStream inputStream = file.getInputStream()) {
 					Files.copy(inputStream, path, StandardCopyOption.REPLACE_EXISTING);
 				}
+
+				contact.setImage(file.getOriginalFilename());
+
 				System.out.println("img uploaded");
 			}
 			contact.setUser(user);
@@ -220,17 +227,22 @@ public class UserController {
 			// image
 			if (!file.isEmpty())
 			{
+				String uploadDir = "/app/uploads/";
+
 				//delete old photo
-				File deleteFile = new ClassPathResource("static/img").getFile();
-				File file1 = new File(deleteFile, oldContactDetail.getImage());
-				file1.delete();
-				
+				File file1 = new File(uploadDir + oldContactDetail.getImage());
+				if(file1.exists())
+				{
+					file1.delete();
+				}
 				
 				// update new image
-				File saveFile = new ClassPathResource("static/img").getFile();
+				File saveDir = new File(uploadDir);
+				if(!saveDir.exists()) {
+					saveDir.mkdirs();  // folder create karo agar nahi hai
+				}
 
-				Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + file.getOriginalFilename());
-
+				Path path = Paths.get(uploadDir + file.getOriginalFilename());
 				Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
 
 				contact.setImage(file.getOriginalFilename());

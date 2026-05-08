@@ -88,8 +88,12 @@ th:replace="normal/base::Layout(~{::section})">
 								<!-- contact image -->
 								
 								<div class="container">
-								<img style="width: 250px; height:250px;" class="img-fluid my_profile_picture" src="" th:src="@{'/img/'+${contact.image}}" alt=""/>
-								
+									<img style="width: 250px; height:250px;"
+										 class="img-fluid my_profile_picture"
+										 th:src="${contact.image == 'contact.png'} ?
+            @{'/img/contact.png'} :
+            @{'/uploads/'+${contact.image}}"
+										 alt=""/>
 								
 								</div>
 								<div class="custom-file">

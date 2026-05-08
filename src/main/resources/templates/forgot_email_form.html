@@ -18,9 +18,9 @@
 								<div class="alert alert-danger my-2 text-center" role="alert">
 
 									<span th:text="${session.message}"> </span>
-								</div> 
+								</div>
 
-								<th:b lock th:text="${#session.removeAttribute('message')}"></th:block>
+								<th:block lock th:text="${#session.removeAttribute('message')}"></th:block>
 							</div>
 
 							<!-- email form -->
